@@ -1,14 +1,10 @@
 from typing import Optional, Dict, Any
 
-import pymysql
-import pymysql.cursors
 import datetime
 import uuid
-import logging
 import json
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+import pymysql
+import pymysql.cursors
 
 def get_organization_app(conn: pymysql.connections.Connection, uuid: str) -> Optional[Dict[str, Any]]:
     """
