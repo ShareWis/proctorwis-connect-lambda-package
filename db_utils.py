@@ -66,7 +66,7 @@ def get_or_create_space(conn: pymysql.connections.Connection, organization_id: i
             space = cursor.fetchone()
 
             if space is None:
-                sql_insert = "INSERT INTO spaces (organization_id, space_code, space_name, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)"
+                sql_insert = "INSERT INTO spaces (organization_id, space_code, space_name) VALUES (%s, %s, %s)"
                 cursor.execute(sql_insert, (organization_id, space_code, space_name, datetime.datetime.now(), datetime.datetime.now()))
 
                 space_id = cursor.lastrowid
@@ -122,7 +122,7 @@ def get_or_create_participant(conn: pymysql.connections.Connection, organization
                     exist_participant = cursor.fetchone()
 
                     if exist_participant is None:
-                        result_closed_at = (datetime.datetime.now() + datetime.timedelta(days=space['open_result_days']))
+                        result_closed_at = (datetime.datetime.now() + datetime.timedelta(days=space['result_open_days']))
                         result_closed_at = result_closed_at.strftime('%Y-%m-%d %H:%M:%S.%f')
 
                         sql_insert = "INSERT INTO participants (uuid, organization_id, space_id, participant_code, participant_user_code, participant_name, result_closed_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
