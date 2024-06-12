@@ -66,8 +66,8 @@ def get_or_create_space(conn: pymysql.connections.Connection, organization_id: i
             space = cursor.fetchone()
 
             if space is None:
-                sql_insert = "INSERT INTO spaces (organization_id, space_code, space_name) VALUES (%s, %s, %s)"
-                cursor.execute(sql_insert, (organization_id, space_code, space_name))
+                sql_insert = "INSERT INTO spaces (organization_id, space_code, space_name, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)"
+                cursor.execute(sql_insert, (organization_id, space_code, space_name, datetime.datetime.now(), datetime.datetime.now()))
 
                 space_id = cursor.lastrowid
 
