@@ -66,8 +66,11 @@ def get_or_create_space(conn: pymysql.connections.Connection, organization_id: i
             space = cursor.fetchone()
 
             if space is None:
-                sql_insert = "INSERT INTO spaces (organization_id, space_code, space_name) VALUES (%s, %s, %s)"
-                cursor.execute(sql_insert, (organization_id, space_code, space_name, datetime.datetime.now(), datetime.datetime.now()))
+                sql_insert = "INSERT INTO spaces (space_code, space_name, result_open_days, monitoring_incamera, monitoring_focus, use_ai_analysis, num_of_participants, num_of_analyzed, organization_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+                now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+
+                cursor.execute(sql_insert, (space_code, space_name, 30, 0, 0, 0, 0, 0, organization_id, now, now))
 
                 space_id = cursor.lastrowid
 
@@ -122,11 +125,12 @@ def get_or_create_participant(conn: pymysql.connections.Connection, organization
                     exist_participant = cursor.fetchone()
 
                     if exist_participant is None:
-                        result_closed_at = (datetime.datetime.now() + datetime.timedelta(days=space['result_open_days']))
-                        result_closed_at = result_closed_at.strftime('%Y-%m-%d %H:%M:%S.%f')
 
-                        sql_insert = "INSERT INTO participants (uuid, organization_id, space_id, participant_code, participant_user_code, participant_name, result_closed_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                        cursor.execute(sql_insert, (participant_uuid, organization_id, space['id'], participant_code, participant_user_code, participant_name, result_closed_at))
+                        sql_insert = "INSERT INTO participants (uuid, participant_code, participant_user_code, participant_name, require_analysis, result_open_at, num_of_images, num_of_analyzed, organization_id, space_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+                        now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+
+                        cursor.execute(sql_insert, (participant_uuid, participant_code, participant_user_code, participant_name, 0, now, 0, 0,  organization_id, space['id'], now, now))
 
                         participant_id = cursor.lastrowid
 
@@ -169,8 +173,11 @@ def create_face_auth_log(conn: pymysql.connections.Connection, organization_id: 
     """
     try:
         with conn.cursor() as cursor:
-            sql = "INSERT INTO face_auth_logs (authentication_code, organization_id, space_id, participant_id, is_authenticated, reason, logs, threshold) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            cursor.execute(sql, (authentication_code, organization_id, space_id, participant_id, is_authenticated, json.dumps(reason), json.dumps(logs), threshold))
+            sql = "INSERT INTO face_auth_logs (authentication_code, organization_id, space_id, participant_id, is_authenticated, reason, logs, threshold, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+            now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+
+            cursor.execute(sql, (authentication_code, organization_id, space_id, participant_id, is_authenticated, json.dumps(reason), json.dumps(logs), threshold, now, now))
 
     except pymysql.MySQLError as e:
         raise
