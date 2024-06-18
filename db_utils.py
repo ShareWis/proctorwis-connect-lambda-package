@@ -126,11 +126,11 @@ def get_or_create_participant(conn: pymysql.connections.Connection, organization
 
                     if exist_participant is None:
 
-                        sql_insert = "INSERT INTO participants (uuid, participant_code, participant_user_code, participant_name, require_analysis, result_open_at, num_of_images, num_of_analyzed, organization_id, space_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                        sql_insert = "INSERT INTO participants (uuid, participant_code, participant_user_code, participant_name, require_analysis, result_open_at, num_of_images, num_of_analyzed, organization_id, space_id, is_analyzed, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
                         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
 
-                        cursor.execute(sql_insert, (participant_uuid, participant_code, participant_user_code, participant_name, 0, now, 0, 0,  organization_id, space['id'], now, now))
+                        cursor.execute(sql_insert, (participant_uuid, participant_code, participant_user_code, participant_name, 0, now, 0, 0,  organization_id, space['id'], 0, now, now))
 
                         participant_id = cursor.lastrowid
 
